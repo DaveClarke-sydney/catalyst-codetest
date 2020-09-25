@@ -51,10 +51,27 @@ class userController
 		} else {
 			$dry_run = in_array('--dry_run', $options);
 			try {
-				userLibrary::processFile($filename, $dry_run);
+				$records = userLibrary::processFile($filename, $dry_run);
 			} catch(Exception $e) {
 				echo $e->getMessage()."\n";
 			}
+
+			if($dry_run){
+				self::displayDryRun($records);
+			} else {
+				echo "successfully added to database\n";
+			}
+		}
+	}
+
+	public static function displayDryRun($records)
+	{
+		$div = "\t\t";
+		echo "Would have inserted the following data:\n";
+		echo "Name{$div}Surname{$div}Email\n";
+		foreach($records as $record)
+		{
+			echo "{$record['name']}{$div}{$record['surname']}{$div}{$record['email']}\n";
 		}
 	}
 

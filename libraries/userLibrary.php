@@ -39,11 +39,12 @@ class userLibrary
 		$records = self::validateAndFormatFile($file);
 
 		$userModel = new userModel();
-		$userModel->createTable();
 		if(!$dry_run)
 		{
+			$userModel->createTable();
 			$userModel->batchInsert($records);
 		}
+		return $records;
 	}
 
 	private static function validateAndFormatFile($file)
@@ -81,6 +82,7 @@ class userLibrary
 
 	private static function validateName($name)
 	{
+		$name = trim($name);
 		//ASSUMPTION 'name' and 'surname' are not valid entries
 		if($name == 'name' || $name == 'surname'){
 			return null;
@@ -94,6 +96,7 @@ class userLibrary
 
 	private static function validateEmail($email)
 	{
+		$email = trim($email);
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			return null;
 		}
