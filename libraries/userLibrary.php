@@ -42,7 +42,9 @@ class userLibrary
 		if(!$dry_run)
 		{
 			$userModel->createTable();
-			$userModel->batchInsert($records);
+			if(!$result = $userModel->batchInsert($records)){
+				throw new \Exception('Unable to insert into database');		
+			}
 		}
 		return [$records, $errors];
 	}
