@@ -39,7 +39,11 @@ class userLibrary
 		$records = self::validateAndFormatFile($file);
 
 		$userModel = new userModel();
-		$userModel->batchInsert($records);
+		$userModel->createTable();
+		if(!$dry_run)
+		{
+			$userModel->batchInsert($records);
+		}
 	}
 
 	private static function validateAndFormatFile($file)
@@ -70,7 +74,6 @@ class userLibrary
 				$emails[] = $record['email'];
 				$records[] = $record;
 			}
-
 		}
 
 		return $records;
@@ -82,12 +85,20 @@ class userLibrary
 		if($name == 'name' || $name == 'surname'){
 			return null;
 		}
+		//ASSUMPTION only the first letter of each name will have to be capitalised
+		//and not any other letters (O'connor and Dicaprio are assumed to be the 
+		//correct capitalisation)
+		$name = ucfirst(strtolower($name));
 		return $name;
 	}
 
 	private static function validateEmail($email)
 	{
-		return $email;
+		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+			return null;
+		}
+
+		return strtolower($email);
 	}
 
 }

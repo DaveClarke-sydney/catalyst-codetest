@@ -25,6 +25,9 @@ class userController
 			return;
 		}
 
+		//ASSUMPTION users will only request one piece of extra information at one
+		//and the presence of that option should override any attempt to 
+		//write to the database
 		if(in_array('--help', $options))
 		{
 			$this->displayHelp();	
@@ -85,24 +88,5 @@ class userController
 }
 
 (new userController())->main($argc, $argv);
-
-
-
-/*
-$records = [
-	['name' => 'John', 'surname' => 'Smith', 'email' => 'john@smith.com'],
-	['name' => 'Sherlock', 'surname' => 'Holmes', 'email' => 'sherlock@holmes.com'],
-];
-$userModel->batchInsert($records);
-$result = $userModel->selectAll();
-
-if ($result->num_rows > 0) {
-  while($row = $result->fetch_assoc()) {
-	  var_dump($row);
-  }
-} else {
-  echo "0 results";
-}
-*/
 
 ?>
