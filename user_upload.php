@@ -89,9 +89,14 @@ class userController
 		echo userModel::$servername."\n";
 	}
 
-	public function createDatabaseOnly()
+	public function createTableOnly()
 	{
-		echo "creating Database only\n";
+		$userModel = new userModel();
+		if($result = $userModel->createTable()){
+			echo "successfully created table\n";
+		} else {
+			echo "unable to create table\n";
+		}
 	}	
 
 	public function processFile($filename, $dry_run)

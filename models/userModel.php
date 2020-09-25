@@ -32,6 +32,14 @@ class userModel
 		return $conn;
 	}
 
+	public function createTable()
+	{
+		$sql = "CREATE TABLE users 
+			(name varchar(50), surname varchar(50), email varchar(50) unique)";
+		$result = $this->db->query($sql);
+		return $result;
+	}
+
 	public function selectAll()
 	{
 		$sql = "SELECT * FROM users";
