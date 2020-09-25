@@ -60,7 +60,8 @@ class userController
 			if($dry_run){
 				self::displayDryRun($records);
 			} else {
-				echo "successfully added to database\n";
+				$count = sizeof($records);
+				echo "successfully added $count records to database\n";
 			}
 
 			foreach($errors as $error){
