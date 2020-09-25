@@ -51,15 +51,20 @@ class userController
 		} else {
 			$dry_run = in_array('--dry_run', $options);
 			try {
-				$records = userLibrary::processFile($filename, $dry_run);
+				list($records, $errors) = userLibrary::processFile($filename, $dry_run);
 			} catch(Exception $e) {
 				echo $e->getMessage()."\n";
+				return;
 			}
 
 			if($dry_run){
 				self::displayDryRun($records);
 			} else {
 				echo "successfully added to database\n";
+			}
+
+			foreach($errors as $error){
+				echo "error: $error\n";
 			}
 		}
 	}

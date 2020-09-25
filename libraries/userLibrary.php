@@ -36,7 +36,7 @@ class userLibrary
 			throw new Exception("unable to open file");	
 		}
 
-		$records = self::validateAndFormatFile($file);
+		list($records, $errors) = self::validateAndFormatFile($file);
 
 		$userModel = new userModel();
 		if(!$dry_run)
@@ -44,13 +44,14 @@ class userLibrary
 			$userModel->createTable();
 			$userModel->batchInsert($records);
 		}
-		return $records;
+		return [$records, $errors];
 	}
 
 	private static function validateAndFormatFile($file)
 	{
 		$records = [];
 		$emails = [];
+		$errors = [];
 		$lines = explode("\n", $file);
 		foreach($lines as $line)
 		{
@@ -60,9 +61,19 @@ class userLibrary
 			}
 			$record = [];
 			//ASSUMPTION first and last names have the same constraints
-			$record['name'] = self::validateName($fields[0]);
-			$record['surname'] = self::validateName($fields[1]);
-			$record['email'] = self::validateEmail($fields[2]);
+			$record['name'] = self::formatName($fields[0]);
+			$record['surname'] = self::formatName($fields[1]);
+			$email = trim($fields[2]);
+			if(self::validEmail($email) || $email == 'email'){
+				$record['email'] = self::formatEmail($fields[2]);
+			} else {
+				//ASSUMPTION The requiresments state that no write to the 
+				//database should happen if an invalid email is found. 
+				//Assuming that this means no write should be done for 
+				//just that entry
+				$errors[] = "Invalid email '{$email}'";
+				$record['email'] = null;
+			}
 
 			//ASSUMPTION no valid entry will have one of these fields empty
 			if(!empty($record['name']) && 
@@ -77,10 +88,10 @@ class userLibrary
 			}
 		}
 
-		return $records;
+		return [$records, $errors];
 	}
 
-	private static function validateName($name)
+	private static function formatName($name)
 	{
 		$name = trim($name);
 		//ASSUMPTION 'name' and 'surname' are not valid entries
@@ -94,14 +105,24 @@ class userLibrary
 		return $name;
 	}
 
-	private static function validateEmail($email)
+	private static function formatEmail($email)
 	{
 		$email = trim($email);
+		if(empty($email) || $email == 'email'){
+			$email = null;
+		}
+		return $email;
+	}	
+		
+	private static function validEmail($email)
+	{
+		$email = trim($email);
+
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-			return null;
+			return false;
 		}
 
-		return strtolower($email);
+		return true;
 	}
 
 }
