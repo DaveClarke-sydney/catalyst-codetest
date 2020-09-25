@@ -1,6 +1,6 @@
 <?php
 
-require_once('./models/userModel.php');
+require_once('./libraries/userLibrary.php');
 
 class userController
 {
@@ -30,19 +30,28 @@ class userController
 			$this->displayHelp();	
 		} elseif(in_array('-u', $options))
 		{
-			$this->displayUser();
+			echo userLibrary::displayUser()."\n";
 		} elseif(in_array('-p', $options))
 		{
-			$this->displayPassword();
+			echo userLibrary::displayPassword()."\n";
 		} elseif(in_array('-h', $options))
 		{
-			$this->displayHost();
+			echo userLibrary::displayHost()."\n";
 		} elseif(in_array('--create_table', $options))
 		{
-			$this->createTableOnly();
+			$result = userLibrary::createTable();
+			if($result) {
+                        	echo "successfully created table\n";
+                	} else {
+                        	echo "unable to create table\n";
+                	}
 		} else {
 			$dry_run = in_array('--dry_run', $options);
-			$this->processFile($filename, $dry_run);
+			try {
+				userLibrary::processFile($filename, $dry_run);
+			} catch(Exception $e) {
+				echo $e->getMessage()."\n";
+			}
 		}
 	}
 
@@ -72,39 +81,6 @@ class userController
 		$helpFilename = 'help.txt';
 		$helpFile = file_get_contents($helpFilename);
 		echo $helpFile."\n";
-	}
-
-	public function displayUser()
-	{
-		echo userModel::$username."\n";
-	}
-
-	public function displayPassword()
-	{
-		echo userModel::$password."\n";
-	}
-
-	public function displayHost()
-	{
-		echo userModel::$servername."\n";
-	}
-
-	public function createTableOnly()
-	{
-		$userModel = new userModel();
-		if($result = $userModel->createTable()){
-			echo "successfully created table\n";
-		} else {
-			echo "unable to create table\n";
-		}
-	}	
-
-	public function processFile($filename, $dry_run)
-	{
-		if(substr($filename, -4) != '.csv'){
-			throw new Exception('not a .csv file');
-		}
-		echo "processing file $filename\n";
 	}
 }
 
