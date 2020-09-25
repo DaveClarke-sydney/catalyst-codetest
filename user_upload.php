@@ -69,22 +69,24 @@ class userController
 
 	public function displayHelp()
 	{
-		echo "displaying Help\n";
+		$helpFilename = 'help.txt';
+		$helpFile = file_get_contents($helpFilename);
+		echo $helpFile."\n";
 	}
 
 	public function displayUser()
 	{
-		echo "displaying User\n";
+		echo userModel::$username."\n";
 	}
 
 	public function displayPassword()
 	{
-		echo "displaying Password\n";
+		echo userModel::$password."\n";
 	}
 
 	public function displayHost()
 	{
-		echo "displaying Host\n";
+		echo userModel::$servername."\n";
 	}
 
 	public function createDatabaseOnly()
@@ -92,7 +94,7 @@ class userController
 		echo "creating Database only\n";
 	}	
 
-	public function processFile($filename)
+	public function processFile($filename, $dry_run)
 	{
 		if(substr($filename, -4) != '.csv'){
 			throw new Exception('not a .csv file');

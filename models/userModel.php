@@ -4,6 +4,14 @@ class userModel
 {
 	public $db;
 
+	//ASSUMPTION - anyone who wants to configure database 
+	//credentials will have access to this file.
+	public static $servername = "localhost";
+	public static $username = "testuser";
+	public static $password = "password";
+	public static $dbname = "catalyst";
+	
+
 	public function __construct()
 	{
 		$this->db = self::setupDb();
@@ -11,19 +19,16 @@ class userModel
 
 	public static function setupDb()
 	{
-		$servername = "localhost";
-		$username = "testuser";
-		$password = "password";
-		$dbname = "catalyst";
-
 		// Create connection
-		$conn = new mysqli($servername, $username, $password, $dbname);
+		$conn = new mysqli(self::$servername,
+			self::$username, 
+			self::$password, 
+			self::$dbname);
 
 		// Check connection
 		if ($conn->connect_error) {
  			die("Connection failed: " . $conn->connect_error);
 		}
-		echo "Connected successfully\n";
 		return $conn;
 	}
 
