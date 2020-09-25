@@ -50,11 +50,12 @@ class userModel
 	public function batchInsert($records)
 	{
 		$values = [];
+
 		foreach($records as $record)
 		{
-			$name = $record['name'];
-			$surname = $record['surname'];
-			$email = $record['email'];
+			$name = $this->db->escape_string($record['name']);
+			$surname = $this->db->escape_string($record['surname']);
+			$email = $this->db->escape_string($record['email']);
 
 			$value = "('$name', '$surname', '$email')";
 			$values[] = $value;

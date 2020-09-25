@@ -35,7 +35,60 @@ class userLibrary
 		if(!$file){
 			throw new Exception("unable to open file");	
 		}
-        }
+
+		$records = self::validateAndFormatFile($file);
+
+		$userModel = new userModel();
+		$userModel->batchInsert($records);
+	}
+
+	private static function validateAndFormatFile($file)
+	{
+		$records = [];
+		$emails = [];
+		$lines = explode("\n", $file);
+		foreach($lines as $line)
+		{
+			$fields = explode(",", $line);
+			if(sizeof($fields) < 3){
+				continue;
+			}
+			$record = [];
+			//ASSUMPTION first and last names have the same constraints
+			$record['name'] = self::validateName($fields[0]);
+			$record['surname'] = self::validateName($fields[1]);
+			$record['email'] = self::validateEmail($fields[2]);
+
+			//ASSUMPTION no valid entry will have one of these fields empty
+			if(!empty($record['name']) && 
+				!empty($record['surname']) &&
+				!empty($record['email']) &&
+				//ASSUMPTION duplicate emails in a single batch should 
+				//use first and ignore the others
+				!in_array($record['email'], $emails))
+			{
+				$emails[] = $record['email'];
+				$records[] = $record;
+			}
+
+		}
+
+		return $records;
+	}
+
+	private static function validateName($name)
+	{
+		//ASSUMPTION 'name' and 'surname' are not valid entries
+		if($name == 'name' || $name == 'surname'){
+			return null;
+		}
+		return $name;
+	}
+
+	private static function validateEmail($email)
+	{
+		return $email;
+	}
 
 }
 
