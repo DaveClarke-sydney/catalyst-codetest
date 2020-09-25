@@ -1,23 +1,22 @@
 <?php
 
-$servername = "localhost";
-$username = "testuser";
-$password = "password";
-$dbname = "catalyst";
+require_once('./models/userModel.php');
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$userModel = new userModel();
 
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
+$records = [
+	['name' => 'John', 'surname' => 'Smith', 'email' => 'john@smith.com'],
+	['name' => 'Sherlock', 'surname' => 'Holmes', 'email' => 'sherlock@holmes.com'],
+];
+$userModel->batchInsert($records);
+$result = $userModel->selectAll();
+
+if ($result->num_rows > 0) {
+  while($row = $result->fetch_assoc()) {
+	  var_dump($row);
+  }
+} else {
+  echo "0 results";
 }
-echo "Connected successfully\n";
-
-
-$sql = "SELECT * FROM users";
-$result = $conn->query($sql);
-
-var_dump($result);
 
 ?>
